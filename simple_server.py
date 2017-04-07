@@ -5,6 +5,7 @@ import socket
 # 3. Remove the b'....' from the incoming message
 
 # http://studyswift.blogspot.com/2016/03/communication-between-ios-device-client.html
+# http://studyswift.blogspot.com/2016/03/communication-between-ios-device-client.html
 
 mysocket = socket.socket()
 host = '10.7.137.31'   # Figure out how to get address dynamically - ...iPhone app needs it too though
