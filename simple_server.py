@@ -52,7 +52,7 @@ def txThread():
 # END txThread()
 
 # Main
-host = '10.0.8.145'   # Figure out how to get address dynamically
+host = '192.168.2.6'   # Figure out how to get address dynamically
 port = 9876
 print ("Pi's IP = " + host)
 
