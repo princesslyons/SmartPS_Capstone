@@ -11,16 +11,8 @@ import UIKit
 class SocketManager: NSObject, StreamDelegate {
     
     static let sharedInstance = SocketManager()
-    
-    //Button
-    var buttonConnect : UIButton!
-    
-    //Label
-    var label : UILabel!
-    var labelConnection : UILabel!
 
     //Socket server
-//    let addr = "10.0.8.143"
     let addr = "10.0.8.143"
     let port = 9876
     
@@ -40,13 +32,14 @@ class SocketManager: NSObject, StreamDelegate {
         print("Sent: ", message)
     }
     
-    //data.bytes.assumingMemoryBound(to: UInt8.self)
-    
     // Function: readMessage - read a message
-    func readMessage() {
+    func readMessage() -> String {
         inStream!.read(&buffer, maxLength: buffer.count)
         let bufferStr = NSString(bytes: &buffer, length: buffer.count, encoding: String.Encoding.utf8.rawValue)
-        print("Read:" + (bufferStr! as String))
+        
+        print("Read: " + (bufferStr! as String))
+        
+        return (bufferStr! as String)
     }
     
     //Network functions
@@ -85,8 +78,6 @@ class SocketManager: NSObject, StreamDelegate {
                 outStream?.close()
                 print("Stop outStream currentRunLoop")
                 outStream?.remove(from: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
-                buttonConnect.alpha = 1
-                buttonConnect.isEnabled = true
             
             case Stream.Event.errorOccurred:
                 print("ErrorOccurred")
@@ -94,8 +85,6 @@ class SocketManager: NSObject, StreamDelegate {
                 inStream?.remove(from: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
                 outStream?.close()
                 outStream?.remove(from: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
-                buttonConnect.alpha = 1
-                buttonConnect.isEnabled = true
             
             case Stream.Event.hasBytesAvailable:
                 print("HasBytesAvailable")

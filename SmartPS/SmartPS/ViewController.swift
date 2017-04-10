@@ -32,7 +32,6 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         print("Loaded")
 //        displayUsage()
-        //SocketManager.sharedInstance.NetworkEnable()
         // Do any additional setup after loading the view, typically from a nib.
     }
 
@@ -52,6 +51,8 @@ class ViewController: UIViewController {
         else {
             SocketManager.sharedInstance.sendMessage(message: "LED1:off")
         }
+        
+        displayUsage()
     }
 
     @IBAction func outlet2(_ sender: Any) {
@@ -88,8 +89,11 @@ class ViewController: UIViewController {
     }
     
     func displayUsage() {
-//        avgPower.text = String(SocketManager.sharedInstance.readMessage()
-//        SocketManager.sharedInstance.readMessage()
+        var value: String
+        value = SocketManager.sharedInstance.readMessage()
+        avgPower.text = value
+        energyUsage.text = value
+        cost.text = value
     }
 }
 //Code to UI (Outlet) - like changing a label or something
