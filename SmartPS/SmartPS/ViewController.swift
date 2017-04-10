@@ -31,7 +31,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print("Loaded")
-        displayUsage()
+//        displayUsage()
         //SocketManager.sharedInstance.NetworkEnable()
         // Do any additional setup after loading the view, typically from a nib.
     }
@@ -49,6 +49,9 @@ class ViewController: UIViewController {
         if outletSwitch1.isOn {
             SocketManager.sharedInstance.sendMessage(message: "LED1:on")
         }
+        else {
+            SocketManager.sharedInstance.sendMessage(message: "LED1:off")
+        }
     }
 
     @IBAction func outlet2(_ sender: Any) {
@@ -57,7 +60,9 @@ class ViewController: UIViewController {
         if outletSwitch2.isOn {
             SocketManager.sharedInstance.sendMessage(message: "LED2:on")
         }
-        
+        else {
+            SocketManager.sharedInstance.sendMessage(message: "LED2:off")
+        }
     }
     
     @IBAction func outlet3(_ sender: Any) {
@@ -65,6 +70,9 @@ class ViewController: UIViewController {
         
         if outletSwitch3.isOn {
             SocketManager.sharedInstance.sendMessage(message: "LED3:on")
+        }
+        else {
+            SocketManager.sharedInstance.sendMessage(message: "LED3:off")
         }
     }
     
@@ -74,11 +82,14 @@ class ViewController: UIViewController {
         if outletSwitch4.isOn {
             SocketManager.sharedInstance.sendMessage(message: "LED4:on")
         }
+        else {
+            SocketManager.sharedInstance.sendMessage(message: "LED4:off")
+        }
     }
     
     func displayUsage() {
 //        avgPower.text = String(SocketManager.sharedInstance.readMessage()
-        SocketManager.sharedInstance.readMessage()
+//        SocketManager.sharedInstance.readMessage()
     }
 }
 //Code to UI (Outlet) - like changing a label or something

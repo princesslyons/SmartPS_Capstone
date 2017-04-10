@@ -20,7 +20,8 @@ class SocketManager: NSObject, StreamDelegate {
     var labelConnection : UILabel!
 
     //Socket server
-    let addr = "100.65.1.12"
+//    let addr = "10.0.8.143"
+    let addr = "10.0.8.143"
     let port = 9876
     
     //Network variables
@@ -33,26 +34,19 @@ class SocketManager: NSObject, StreamDelegate {
     
     // Function: sendMessage - send a message
     func sendMessage(message: String) {
-        print("Outgoing Message sent")
         let data : NSData = message.data(using: String.Encoding.utf8)! as NSData
         outStream?.write(data.bytes.assumingMemoryBound(to: UInt8.self), maxLength: data.length)
+        
+        print("Sent: ", message)
     }
     
     //data.bytes.assumingMemoryBound(to: UInt8.self)
     
     // Function: readMessage - read a message
     func readMessage() {
-        print("Incoming message read")
-        
         inStream!.read(&buffer, maxLength: buffer.count)
         let bufferStr = NSString(bytes: &buffer, length: buffer.count, encoding: String.Encoding.utf8.rawValue)
-        print("Buffer:" + (bufferStr! as String))
-    }
-    
-    // Function: Quit
-    func btnQuitPressed(sender: UIButton) {
-        let data : NSData = "Quit".data(using: String.Encoding.utf8)! as NSData
-        outStream?.write(data.bytes.assumingMemoryBound(to: UInt8.self), maxLength: data.length)
+        print("Read:" + (bufferStr! as String))
     }
     
     //Network functions
