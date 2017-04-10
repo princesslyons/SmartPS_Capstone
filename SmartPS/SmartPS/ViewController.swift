@@ -16,10 +16,22 @@ class ViewController: UIViewController {
     //  4. Fix switch funtionality
     //  5. Add UI for displaying costs and such...
     
+    @IBOutlet weak var outletSwitch1: UISwitch!
+    @IBOutlet weak var outletSwitch2: UISwitch!
+    @IBOutlet weak var outletSwitch3: UISwitch!
+    @IBOutlet weak var outletSwitch4: UISwitch!
+    @IBOutlet weak var outletLabel1: UILabel!
+    @IBOutlet weak var outletLabel2: UILabel!
+    @IBOutlet weak var outletLabel3: UILabel!
+    @IBOutlet weak var outletLabel4: UILabel!
+    @IBOutlet weak var avgPower: UILabel!
+    @IBOutlet weak var energyUsage: UILabel!
+    @IBOutlet weak var cost: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         print("Loaded")
+//        displayUsage()
         //SocketManager.sharedInstance.NetworkEnable()
         // Do any additional setup after loading the view, typically from a nib.
     }
@@ -30,51 +42,58 @@ class ViewController: UIViewController {
     }
     
     @IBAction func outlet1(_ sender: Any) {
-        //Code to turn off led
         
-        //Fix functionality of switch. Only send message when switching on
+        if outletSwitch1.isOn {
+            SocketManager.sharedInstance.sendMessage(message: "LED1:on")
+        }
+        else {
+            SocketManager.sharedInstance.sendMessage(message: "LED1:off")
+        }
         
-        //if switching on
-        SocketManager.sharedInstance.sendMessage(message: "LED1:on")
+        //displayUsage()
         
-        //if switching off
-        //SocketManager.sharedInstance.sendMessage(message: "LED1:off")
     }
 
     @IBAction func outlet2(_ sender: Any) {
         //Code to turn off led
         
-        //if switching on
-        //SocketManager.sharedInstance.sendMessage(message: "LED2:on")
-        
-        SocketManager.sharedInstance.readMessage()
-        
-        
-        //if switching off
-        //SocketManager.sharedInstance.sendMessage(message: "LED2:off")
+        if outletSwitch2.isOn {
+            SocketManager.sharedInstance.sendMessage(message: "LED2:on")
+        }
+        else {
+            SocketManager.sharedInstance.sendMessage(message: "LED2:off")
+        }
     }
     
     @IBAction func outlet3(_ sender: Any) {
         //Code to turn off led
         
-        //if switching on
-        SocketManager.sharedInstance.sendMessage(message: "LED3:on")
-        
-        //if switching off
-        //SocketManager.sharedInstance.sendMessage(message: "LED3:off")
-        
+        if outletSwitch3.isOn {
+            SocketManager.sharedInstance.sendMessage(message: "LED3:on")
+        }
+        else {
+            SocketManager.sharedInstance.sendMessage(message: "LED3:off")
+        }
     }
     
     @IBAction func outlet4(_ sender: Any) {
         //Code to turn off led
         
-        //if switching on
-        SocketManager.sharedInstance.sendMessage(message: "QUIT")    //"LED4:on" - real message
-        
-        //if switching off
-        //SocketManager.sharedInstance.sendMessage(message: "LED4:off")
+        if outletSwitch4.isOn {
+            SocketManager.sharedInstance.sendMessage(message: "LED4:on")
+        }
+        else {
+            SocketManager.sharedInstance.sendMessage(message: "LED4:off")
+        }
     }
     
+    func displayUsage() {
+        var value: String
+        value = SocketManager.sharedInstance.readMessage()
+        avgPower.text = value
+        energyUsage.text = value
+        cost.text = value
+    }
 }
 //Code to UI (Outlet) - like changing a label or something
 //From UI to Code (Action)

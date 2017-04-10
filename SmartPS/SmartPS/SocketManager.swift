@@ -20,7 +20,8 @@ class SocketManager: NSObject, StreamDelegate {
     var labelConnection : UILabel!
 
     //Socket server
-    let addr = "10.7.137.31"
+//    let addr = "10.0.8.143"
+    let addr = "10.0.8.143"
     let port = 9876
     
     //Network variables
@@ -33,25 +34,22 @@ class SocketManager: NSObject, StreamDelegate {
     
     // Function: sendMessage - send a message
     func sendMessage(message: String) {
-        print("Outgoing Message sent")
         let data : NSData = message.data(using: String.Encoding.utf8)! as NSData
         outStream?.write(data.bytes.assumingMemoryBound(to: UInt8.self), maxLength: data.length)
+        
+        print("Sent: ", message)
     }
+    
+    //data.bytes.assumingMemoryBound(to: UInt8.self)
     
     // Function: readMessage - read a message
-    func readMessage() {
-        print("Incoming message read")
-        
+    func readMessage() -> String {
         inStream!.read(&buffer, maxLength: buffer.count)
         let bufferStr = NSString(bytes: &buffer, length: buffer.count, encoding: String.Encoding.utf8.rawValue)
-        print(bufferStr!)
         
-    }
-    
-    // Function: Quit
-    func btnQuitPressed(sender: UIButton) {
-        let data : NSData = "Quit".data(using: String.Encoding.utf8)! as NSData
-        outStream?.write(data.bytes.assumingMemoryBound(to: UInt8.self), maxLength: data.length)
+        print("Read:" + (bufferStr! as String))
+        
+        return (bufferStr! as String)
     }
     
     //Network functions
@@ -77,6 +75,7 @@ class SocketManager: NSObject, StreamDelegate {
         inStream?.close()
         outStream?.close()
     }
+    
     
     // Where in the code is this function used?? - Find
     func stream(aStream: Stream, handleEvent eventCode: Stream.Event) {
@@ -121,6 +120,4 @@ class SocketManager: NSObject, StreamDelegate {
                 print("Unknown")
         }
     }
-    
-    
 }
