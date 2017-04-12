@@ -13,7 +13,7 @@ class SocketManager: NSObject, StreamDelegate {
     static let sharedInstance = SocketManager()
 
     //Socket server
-    let addr = "10.0.8.143"
+    let addr = "10.0.8.85"
     let port = 9876
     
     //Network variables
@@ -21,11 +21,12 @@ class SocketManager: NSObject, StreamDelegate {
     var outStream: OutputStream?
     
     //Data received
-    var buffer = [UInt8](repeating: 0, count: 200)
+    var buffer = [UInt8](repeating: 0, count: 5)
     
     
     // Function: sendMessage - send a message
     func sendMessage(message: String) {
+        
         let data : NSData = message.data(using: String.Encoding.utf8)! as NSData
         outStream?.write(data.bytes.assumingMemoryBound(to: UInt8.self), maxLength: data.length)
         
@@ -34,6 +35,7 @@ class SocketManager: NSObject, StreamDelegate {
     
     // Function: readMessage - read a message
     func readMessage() -> String {
+
         inStream!.read(&buffer, maxLength: buffer.count)
         let bufferStr = NSString(bytes: &buffer, length: buffer.count, encoding: String.Encoding.utf8.rawValue)
         
@@ -56,14 +58,14 @@ class SocketManager: NSObject, StreamDelegate {
         
         inStream?.open()
         outStream?.open()
-        
-        buffer = [UInt8](repeating: 0, count: 200)
     }
     
     func NetworkDisable(){
         print("NetworkDisable")
         inStream?.close()
+        inStream?.remove(from: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
         outStream?.close()
+        outStream?.remove(from: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
     }
     
     
