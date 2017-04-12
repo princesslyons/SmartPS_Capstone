@@ -13,7 +13,7 @@ class SocketManager: NSObject, StreamDelegate {
     static let sharedInstance = SocketManager()
 
     //Socket server
-    let addr = "10.0.8.43"
+    let addr = "10.0.8.70"
     let port = 3000
     
     //Network variables
