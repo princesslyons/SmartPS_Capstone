@@ -89,16 +89,16 @@ class ViewController: UIViewController {
         }
     }
     
-//    func displayUsage() {
-//        //while true {
-//            var value: String
-//            value = SocketManager.sharedInstance.readMessage()
-//            avgPower.text = value
-//            energyUsage.text = value
-//            cost.text = value
-//            print("Update values")
-//        //}
-//    }
+    func displayUsage() {
+        while true {
+            var value: String
+            value = SocketManager.sharedInstance.readMessage()
+            avgPower.text = value
+            energyUsage.text = value
+            cost.text = value
+            print("Update values")
+        }
+    }
 }
 //Code to UI (Outlet) - like changing a label or something
 //From UI to Code (Action)
