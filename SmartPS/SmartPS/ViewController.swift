@@ -52,7 +52,7 @@ class ViewController: UIViewController {
             SocketManager.sharedInstance.sendMessage(message: "LED1:off")
         }
         
-        displayUsage()
+//        displayUsage()
     }
 
     @IBAction func outlet2(_ sender: Any) {
