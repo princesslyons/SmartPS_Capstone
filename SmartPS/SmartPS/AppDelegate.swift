@@ -29,7 +29,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
         
         print("DidEnterBackground")
+        SocketManager.sharedInstance.sendMessage(message: "QUIT")
         SocketManager.sharedInstance.NetworkDisable()
+        
         
     }
 
@@ -38,6 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         print("EnterForeground")
         SocketManager.sharedInstance.NetworkEnable()
+        //ViewController.sharedInstance.displayUsage()
         
     }
 
@@ -45,13 +48,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         print("DidBecomeActive")
         SocketManager.sharedInstance.NetworkEnable()
-        
+        //ViewController.sharedInstance.displayUsage()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         
         print("WillTerminate")
+        SocketManager.sharedInstance.sendMessage(message: "QUIT")
         SocketManager.sharedInstance.NetworkDisable()
     }
 
