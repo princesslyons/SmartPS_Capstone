@@ -10,6 +10,8 @@ import UIKit
 
 class ViewController: UIViewController {
     
+//    static let sharedInstance = ViewController()
+    
     //  1. OPEN AND CLOSE CONNECTION IN AppDelegate.swift!!!
     //  2. RECEIVE DATA! - maybe create a simple label and try changing the text
     //  3. Handle when the app exits -> close the port/socket
@@ -31,7 +33,6 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print("Loaded")
-//        displayUsage()
         // Do any additional setup after loading the view, typically from a nib.
     }
 
@@ -52,7 +53,7 @@ class ViewController: UIViewController {
             SocketManager.sharedInstance.sendMessage(message: "LED1:off")
         }
         
-        displayUsage()
+        //displayUsage()
     }
 
     @IBAction func outlet2(_ sender: Any) {
@@ -89,11 +90,14 @@ class ViewController: UIViewController {
     }
     
     func displayUsage() {
-        var value: String
-        value = SocketManager.sharedInstance.readMessage()
-        avgPower.text = value
-        energyUsage.text = value
-        cost.text = value
+        while true {
+            var value: String
+            value = SocketManager.sharedInstance.readMessage()
+            avgPower.text = value
+            energyUsage.text = value
+            cost.text = value
+            print("Update values")
+        }
     }
 }
 //Code to UI (Outlet) - like changing a label or something
