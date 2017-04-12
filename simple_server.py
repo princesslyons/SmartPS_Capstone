@@ -2,6 +2,8 @@ import socket
 import threading
 import time
 import RPi.GPIO as GPIO # Import GPIO Library
+import sqlite3
+import datetime
 
 # 1. Needs to know if a client is connected
 # 2. How to SEND data? - remember it's sent as bytes
@@ -20,11 +22,15 @@ GPIO.setup(pin2, GPIO.OUT)
 GPIO.setup(pin3, GPIO.OUT)
 GPIO.setup(pin4, GPIO.OUT)
 
+flag = True     # flag to control thread
+
 def rxThread():
     # Receive/Read message in this thread
     # Outlet Control
     #   -> Code to turn on and off the RPi's pins here
     print (threading.currentThread().getName(), 'Starting')
+    time_flag = 1
+    global flag
 
     while flag:
         data = c.recv(1024)
@@ -35,26 +41,41 @@ def rxThread():
             print ("\n(rxThread) Recieved: " + data + " from " + addr[0])
 
         if data == "QUIT":
-            GPIO.cleanup()
+            GPIO.output(pin1, 0)
+            GPIO.output(pin2, 0)
+            GPIO.output(pin3, 0)
+            GPIO.output(pin4, 0)
+            #GPIO.cleanup()
+            flag = False        # Close connetion to client (iOS)
             break
 
         if data == "LED1:on":
-            GPIO.output(pin1, True)
+            GPIO.output(pin1, 1)
         if data == "LED2:on":
-            GPIO.output(pin2, True)
+            GPIO.output(pin2, 1) 
         if data == "LED3:on":
-            GPIO.output(pin3, True)
+            GPIO.output(pin3, 1)
         if data == "LED4:on":
-            GPIO.output(pin4, True)
+            GPIO.output(pin4, 1)
 
         if data == "LED1:off":
-            GPIO.output(pin1, False)
+            GPIO.output(pin1, 0)
         if data == "LED2:off":
-            GPIO.output(pin2, False)
+            GPIO.output(pin2, 0) 
         if data == "LED3:off":
-            GPIO.output(pin3, False)
+            GPIO.output(pin3, 0)
         if data == "LED4:off":
-            GPIO.output(pin4, False)
+            GPIO.output(pin4, 0)
+        if (pin1 == 1 or pin2 == 1 or pin3 == 1 or pin4 == 1) and time_flag == 1:
+            # start the timer
+            start_time = time.time()
+            time_flag = 0
+        elif pin1 == 0 and pin2 == 0 and pin3 == 0 and pin4 == 0:
+            # stop the timer
+            end_time = time.time()
+            time_flag = 1
+            duration = end_time - start_time
+            total_duration += duration
 
     print (threading.currentThread().getName(), 'Exiting')
 # END rxThread()
@@ -63,6 +84,12 @@ def txThread():
     # Transmit/Send message in this thread
     # Send updates to client every x seconds.
     #   -> Get updates from database run calculations
+
+    #conn = sqlite3.connect('test')
+    #cur = conn.cursor()
+
+    global flag
+    
     count = 0
     print (threading.currentThread().getName(), 'Starting')
     while flag:
@@ -73,38 +100,49 @@ def txThread():
         print("String length: " + str(len(data2.encode('utf-8'))))
 
         if flag == False:
+            c.close()               # Closing connection to client (iOS)
             break
+        
         time.sleep(2)
         count = count + 1
 
+    #conn.commit()
+    #conn.close()
     print (threading.currentThread().getName(), 'Exiting')
 # END txThread()
 
 # Main
-host = '10.0.8.143'   # Figure out how to get address dynamically
-port = 9876
+host = '10.0.8.43'   # Figure out how to get address dynamically
+port = 3000
 print ("Pi's IP = " + host)
-
-flag = True     # flag to control threads
 
 # Create socket
 mysocket = socket.socket()
-mysocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # Prevent socket.error: [Errno 98] Address already in use
+mysocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1) # Prevent socket.error: [Errno 98] Address already in use
 mysocket.bind((host, port))
 mysocket.listen(5)
-c, addr = mysocket.accept()
 
-# Create threads
-rx = threading.Thread(name='rxThread', target=rxThread)
-tx = threading.Thread(name='txThread', target=txThread)
+total_duration = 0
+#db = threading.Thread(name='dbThread', target=dbThread)
 
-# Start threads
-rx.start()
-tx.start()
+while flag:
+    print("Waiting for connection...")
+    c, addr = mysocket.accept()
 
-# Join threads
-rx.join()
-tx.join()
+    # Create threads
+    rx = threading.Thread(name='rxThread', target=rxThread)
+    tx = threading.Thread(name='txThread', target=txThread)
 
+    # Start threads
+    rx.start()
+    tx.start()
+    
+    # Join threads
+    rx.join()
+    tx.join()
+
+    flag = True
+
+mysocket.close()
+GPIO.cleanup()
 print ("Server stopped")
-c.close()
