@@ -36,25 +36,25 @@
                                 <color key="textColor" red="1" green="0.80770778656005859" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OMV-rS-1Hc" userLabel="Outlet1">
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="OMV-rS-1Hc" userLabel="Outlet1">
                                 <rect key="frame" x="120" y="113" width="51" height="31"/>
                                 <connections>
                                     <action selector="outlet1:" destination="BYZ-38-t0r" eventType="valueChanged" id="Mtw-Aa-N5i"/>
                                 </connections>
                             </switch>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yj0-Yg-otM" userLabel="Outlet2">
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="yj0-Yg-otM" userLabel="Outlet2">
                                 <rect key="frame" x="289" y="113" width="51" height="31"/>
                                 <connections>
                                     <action selector="outlet2:" destination="BYZ-38-t0r" eventType="valueChanged" id="SQv-Hn-Gss"/>
                                 </connections>
                             </switch>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iq9-tJ-SDo" userLabel="Outlet3">
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="iq9-tJ-SDo" userLabel="Outlet3">
                                 <rect key="frame" x="120" y="170" width="51" height="31"/>
                                 <connections>
                                     <action selector="outlet3:" destination="BYZ-38-t0r" eventType="valueChanged" id="R2B-9T-1uO"/>
                                 </connections>
                             </switch>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iGB-iN-fyG" userLabel="Outlet4">
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="iGB-iN-fyG" userLabel="Outlet4">
                                 <rect key="frame" x="289" y="170" width="51" height="31"/>
                                 <connections>
                                     <action selector="outlet4:" destination="BYZ-38-t0r" eventType="valueChanged" id="QZS-YE-Um7"/>
