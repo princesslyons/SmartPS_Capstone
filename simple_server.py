@@ -4,6 +4,7 @@ import time
 import RPi.GPIO as GPIO # Import GPIO Library
 import sqlite3
 import datetime
+# import spidev
 
 # 1. Needs to know if a client is connected
 # 2. How to SEND data? - remember it's sent as bytes
@@ -22,7 +23,47 @@ GPIO.setup(pin2, GPIO.OUT)
 GPIO.setup(pin3, GPIO.OUT)
 GPIO.setup(pin4, GPIO.OUT)
 
+# spi = spidev.SpiDev()
+# spi.open(0,0)
+
 flag = True     # flag to control thread
+
+def readadc(adcnum):
+    # read SPI data from the MCP3008, 8 channels in total
+    if adcnum > 7 or adcnum < 0:
+        return -1
+    r = spi.xfer2([1, 8 + adcnum << 4, 0])
+    data = ((r[1] & 3) << 8) + r[2]
+    return data
+
+def dbThread():
+    conn = sqlite3.connect('test')
+    cur = conn.cursor()
+
+    tries = 20  # Number of measurements to take
+    v_ref = 2.5     # Max voltage value of incoming signal
+    c_resistor = 1200   # Value of resistor used to calculate current
+    analog_value = 2.345
+    delay = 0.25
+
+    for i in range(0,tries):
+        # analog_value = readadc(analog_channel)  # Read channel
+        analog_value += 1.234
+        dateTime = datetime.datetime.now()      # Get timestamp
+        voltage = (analog_value*v_ref)/(2**10)       # Convert to voltage
+        current = voltage/c_resistor                  # Calculate current
+        power = voltage*current                 # Calculate power
+        # print ("---------------------------------------")   # Display
+        # print("Analog Value: %f" % analog_value)
+        # print("Voltage Value: %f" % voltage)
+        # print("Current Value: %f" % current)
+        # print("Power Value: %f" % power)
+        cur.execute("INSERT INTO test VALUES (?,?,?)", (voltage,power,dateTime))  # Update database
+        time.sleep(delay)
+
+    conn.commit()
+    conn.close()
+# END dbThread()
 
 def rxThread():
     # Receive/Read message in this thread
@@ -45,7 +86,6 @@ def rxThread():
             GPIO.output(pin2, 0)
             GPIO.output(pin3, 0)
             GPIO.output(pin4, 0)
-            #GPIO.cleanup()
             flag = False        # Close connetion to client (iOS)
             break
 
@@ -85,15 +125,20 @@ def txThread():
     # Send updates to client every x seconds.
     #   -> Get updates from database run calculations
 
-    #conn = sqlite3.connect('test')
-    #cur = conn.cursor()
+    conn = sqlite3.connect('test')
+    cur = conn.cursor()
 
     global flag
     
     count = 0
+    temp = 0
     print (threading.currentThread().getName(), 'Starting')
     while flag:
-        data2 = str(count)
+        for row in cur.execute("SELECT power FROM test ORDER BY dateTime DESC LIMIT 10"): # query database
+            print row[0]
+            temp += row[0]
+        # data2 = str(count)
+        data2 = str(temp/10)
         data2 = data2.encode()
         c.send(data2)
         print("(txThread) Sent: " + str(count))
@@ -104,17 +149,18 @@ def txThread():
             break
         
         time.sleep(2)
-        count = count + 1
+        count += 1
 
-    #conn.commit()
-    #conn.close()
+    conn.commit()
+    conn.close()
     print (threading.currentThread().getName(), 'Exiting')
 # END txThread()
 
 # Main
-host = '10.0.8.43'   # Figure out how to get address dynamically
-port = 3000
+host = '10.0.8.89'   # Figure out how to get address dynamically
+port = 9876
 print ("Pi's IP = " + host)
+
 
 # Create socket
 mysocket = socket.socket()
@@ -123,21 +169,23 @@ mysocket.bind((host, port))
 mysocket.listen(5)
 
 total_duration = 0
-#db = threading.Thread(name='dbThread', target=dbThread)
 
 while flag:
     print("Waiting for connection...")
     c, addr = mysocket.accept()
 
     # Create threads
+    db = threading.Thread(name='dbThread', target=dbThread)
     rx = threading.Thread(name='rxThread', target=rxThread)
     tx = threading.Thread(name='txThread', target=txThread)
 
     # Start threads
+    db.start()
     rx.start()
     tx.start()
     
     # Join threads
+    db.join()
     rx.join()
     tx.join()
 
