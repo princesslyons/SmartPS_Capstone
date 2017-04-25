@@ -40,40 +40,46 @@ def dbThread():
     conn = sqlite3.connect('test')
     cur = conn.cursor()
 
+    voltage_channel = 7
+    current_channel = 5
     tries = 20  # Number of measurements to take
-    v_ref = 2.5     # Max voltage value of incoming signal
+    v_ref = 3.3     # Max voltage value of incoming signal
+    c_ref = 1.47
     c_resistor = 1200   # Value of resistor used to calculate current
     analog_value = 2.345
     delay = 0.25
 
-    for i in range(0,tries):
-        # analog_value = readadc(analog_channel)  # Read channel
-        analog_value += 1.234
-        dateTime = datetime.datetime.now()      # Get timestamp
-        voltage = (analog_value*v_ref)/(2**10)       # Convert to voltage
-        current = voltage/c_resistor                  # Calculate current
-        power = voltage*current                 # Calculate power
-        # print ("---------------------------------------")   # Display
-        # print("Analog Value: %f" % analog_value)
-        # print("Voltage Value: %f" % voltage)
-        # print("Current Value: %f" % current)
-        # print("Power Value: %f" % power)
-        cur.execute("INSERT INTO test VALUES (?,?,?)", (voltage,power,dateTime))  # Update database
-        time.sleep(delay)
+    # for i in range(0,tries):
+    #     # analog_value = readadc(analog_channel)  # Read channel
+    #     analog_value += 1.234
+    #     dateTime = datetime.datetime.now()      # Get timestamp
+    #     voltage = (analog_value*v_ref)/(2**10)       # Convert to voltage
+    #     current = voltage/c_resistor                  # Calculate current
+    #     power = voltage*current                 # Calculate power
+    #     # print ("---------------------------------------")   # Display
+    #     # print("Analog Value: %f" % analog_value)
+    #     # print("Voltage Value: %f" % voltage)
+    #     # print("Current Value: %f" % current)
+    #     # print("Power Value: %f" % power)
+    #     cur.execute("INSERT INTO test VALUES (?,?,?)", (voltage,power,dateTime))  # Update database
+    #     time.sleep(delay)
 
+    # while True:
     for i in range(0,tries):
-        # analog_value = readadc(analog_channel)  # Read channel
-        analog_value += 1.234
+        voltage_value = readadc(voltage_channel)  # Read channel
+        current_value = readadc(current_channel)
         dateTime = datetime.datetime.now()      # Get timestamp
-        voltage = (analog_value*v_ref)/(2**10)       # Convert to voltage
-        current = voltage/c_resistor                  # Calculate current
+        voltage = (voltage_value*v_ref)/(2**10)
+        current = (current_value-c_ref)/0.1       # Convert to voltage
+        # current = voltage/c_resistor                  # Calculate current
         power = voltage*current                 # Calculate power
-        # print ("---------------------------------------")   # Display
-        # print("Analog Value: %f" % analog_value)
-        # print("Voltage Value: %f" % voltage)
-        # print("Current Value: %f" % current)
-        # print("Power Value: %f" % power)
-        cur.execute("INSERT INTO test VALUES (?,?,?)", (voltage,power,dateTime))  # Update database
+        print ("---------------------------------------")   # Display
+        print("Voltage Analog Value: %f" % voltage_value)
+        print("Current Analog Value: %f" % current_value)
+        print("Voltage Value: %f" % voltage)
+        print("Current Value: %f" % current)
+        print("Power Value: %f" % power)
+        cur.execute("INSERT INTO test VALUES (?,?,?,?)", (voltage,current,power,dateTime))  # Update database
         time.sleep(delay)
 
     conn.commit()
@@ -149,7 +155,7 @@ def txThread():
     temp = 0
     print (threading.currentThread().getName(), 'Starting')
     while flag:
-        for row in cur.execute("SELECT power FROM test ORDER BY dateTime DESC LIMIT 10"): # query database
+        for row in cur.execute("SELECT power FROM test ORDER BY dateTime DESC LIMIT 100"): # query database
             print row[0]
             temp += row[0]
         data2 = str(count)
