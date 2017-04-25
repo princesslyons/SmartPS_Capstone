@@ -53,7 +53,7 @@ class ViewController: UIViewController {
             SocketManager.sharedInstance.sendMessage(message: "LED1:off")
         }
         
-//        displayUsage()
+        displayUsage()
     }
 
     @IBAction func outlet2(_ sender: Any) {
@@ -90,14 +90,14 @@ class ViewController: UIViewController {
     }
     
     func displayUsage() {
-        while true {
+//        while true {
             var value: String
             value = SocketManager.sharedInstance.readMessage()
             avgPower.text = value
             energyUsage.text = value
             cost.text = value
             print("Update values")
-        }
+//        }
     }
 }
 //Code to UI (Outlet) - like changing a label or something

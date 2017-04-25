@@ -13,7 +13,7 @@ class SocketManager: NSObject, StreamDelegate {
     static let sharedInstance = SocketManager()
 
     //Socket server
-    let addr = "10.0.8.61"
+    let addr = "10.7.113.78"
     let port = 9876
     
     //Network variables
@@ -21,8 +21,7 @@ class SocketManager: NSObject, StreamDelegate {
     var outStream: OutputStream?
     
     //Data received
-    var buffer = [UInt8](repeating: 0, count: 5)
-    
+//    var buffer = [UInt8](repeating: 0, count: MemoryLayout<Int>.size)
     
     // Function: sendMessage - send a message
     func sendMessage(message: String) {
@@ -35,9 +34,11 @@ class SocketManager: NSObject, StreamDelegate {
     
     // Function: readMessage - read a message
     func readMessage() -> String {
-
-        inStream!.read(&buffer, maxLength: buffer.count)
-        let bufferStr = NSString(bytes: &buffer, length: buffer.count, encoding: String.Encoding.utf8.rawValue)
+        var buffer = [UInt8](repeating: 0, count: MemoryLayout<Int>.size)
+        let nBytes: Int = inStream!.read(&buffer, maxLength: buffer.count)
+        print(buffer)
+//        print(nBytes)
+        let bufferStr = NSString(bytes: &buffer, length: nBytes, encoding: String.Encoding.utf8.rawValue)
         
         print("Read: " + (bufferStr! as String))
         
@@ -91,12 +92,12 @@ class SocketManager: NSObject, StreamDelegate {
             case Stream.Event.hasBytesAvailable:
                 print("HasBytesAvailable")
                 
-                if aStream == inStream {
+                /*if aStream == inStream {
                     inStream!.read(&buffer, maxLength: buffer.count)
                     let bufferStr = NSString(bytes: &buffer, length: buffer.count, encoding: String.Encoding.utf8.rawValue)
                     //label.text = bufferStr! as String
                     print(bufferStr!)
-                }
+                }*/
                 
             case Stream.Event.hasSpaceAvailable:
                 print("HasSpaceAvailable")
