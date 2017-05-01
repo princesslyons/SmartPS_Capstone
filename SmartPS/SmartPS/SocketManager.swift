@@ -13,7 +13,7 @@ class SocketManager: NSObject, StreamDelegate {
     static let sharedInstance = SocketManager()
 
     //Socket server
-    let addr = "10.7.113.78"
+    let addr = "10.0.8.89"
     let port = 9876
     
     //Network variables
@@ -21,7 +21,7 @@ class SocketManager: NSObject, StreamDelegate {
     var outStream: OutputStream?
     
     //Data received
-//    var buffer = [UInt8](repeating: 0, count: MemoryLayout<Int>.size)
+    var buffer = [UInt8](repeating: 0, count: 12)
     
     // Function: sendMessage - send a message
     func sendMessage(message: String) {
@@ -33,16 +33,16 @@ class SocketManager: NSObject, StreamDelegate {
     }
     
     // Function: readMessage - read a message
-    func readMessage() -> String {
-        var buffer = [UInt8](repeating: 0, count: MemoryLayout<Int>.size)
-        let nBytes: Int = inStream!.read(&buffer, maxLength: buffer.count)
+    func readMessage() -> Float {
+        let nBytes: Int = inStream!.read(&buffer, maxLength: buffer.count)              //Read from inStream into buffer
+        print("Bytes in buffer:" + String(nBytes))
         print(buffer)
-//        print(nBytes)
+        
         let bufferStr = NSString(bytes: &buffer, length: nBytes, encoding: String.Encoding.utf8.rawValue)
+        print("NSString bufferStr: ", bufferStr!.floatValue)
         
-        print("Read: " + (bufferStr! as String))
-        
-        return (bufferStr! as String)
+        print("Read: ", bufferStr!.floatValue)
+        return (bufferStr!.floatValue)
     }
     
     //Network functions

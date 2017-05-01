@@ -10,7 +10,7 @@ import UIKit
 
 class ViewController: UIViewController {
     
-//    static let sharedInstance = ViewController()
+    static let sharedInstance = ViewController()
     
     //  1. OPEN AND CLOSE CONNECTION IN AppDelegate.swift!!!
     //  2. RECEIVE DATA! - maybe create a simple label and try changing the text
@@ -30,12 +30,17 @@ class ViewController: UIViewController {
     @IBOutlet weak var energyUsage: UILabel!
     @IBOutlet weak var cost: UILabel!
     
+    var timer = Timer()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         print("Loaded")
         // Do any additional setup after loading the view, typically from a nib.
+        
+        timer = Timer.scheduledTimer(timeInterval: 2, target:self, selector: #selector(ViewController.displayUsage), userInfo: nil, repeats: true)
+        print("timer started")
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -53,7 +58,7 @@ class ViewController: UIViewController {
             SocketManager.sharedInstance.sendMessage(message: "LED1:off")
         }
         
-        displayUsage()
+        //displayUsage()
     }
 
     @IBAction func outlet2(_ sender: Any) {
@@ -90,14 +95,14 @@ class ViewController: UIViewController {
     }
     
     func displayUsage() {
-//        while true {
-            var value: String
+            var value: Float
             value = SocketManager.sharedInstance.readMessage()
-            avgPower.text = value
-            energyUsage.text = value
-            cost.text = value
-            print("Update values")
-//        }
+            //print(value)
+        
+            avgPower.text = String(value)
+            energyUsage.text = String(value * 2)
+            cost.text = String(value * 3)
+            print("executed: displayUsage()")
     }
 }
 //Code to UI (Outlet) - like changing a label or something
