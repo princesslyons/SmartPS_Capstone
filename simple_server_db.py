@@ -48,39 +48,25 @@ def dbThread():
     tries = 12000  # Number of measurements to take
     v_ref = 3.3     # Max voltage value of incoming signal
     c_ref = 1.465
-    c_resistor = 1200   # Value of resistor used to calculate current
-    analog_value = 2.345
-    delay = 0.008
+    delay = 0.008   # 120 Hz
     count = 0
     avgPower = 0
     sampleRate = 240   # 2 seconds at a 120 Hz
     global globalAvgPower
 
-    # for i in range(0,tries):
-    #     # analog_value = readadc(analog_channel)  # Read channel
-    #     analog_value += 1.234
-    #     dateTime = datetime.datetime.now()      # Get timestamp
-    #     voltage = (analog_value*v_ref)/(2**10)       # Convert to voltage
-    #     current = voltage/c_resistor                  # Calculate current
-    #     power = voltage*current                 # Calculate power
-    #     # print ("---------------------------------------")   # Display
-    #     # print("Analog Value: %f" % analog_value)
-    #     # print("Voltage Value: %f" % voltage)
-    #     # print("Current Value: %f" % current)
-    #     # print("Power Value: %f" % power)
-    #     cur.execute("INSERT INTO test VALUES (?,?,?)", (voltage,power,dateTime))  # Update database
-    #     time.sleep(delay)
-
     #while True:
-    for i in range(0,sampleRate):
+    for i in range(0,tries):
         #voltage_value = readadc(voltage_channel)  # Read channel
-        current_value = readadc(current_channel)
-       # voltage = (voltage_value*v_ref)/(2**10)
+        #voltage = (voltage_value*v_ref)/(2**10)
         voltage = 120
-        current = (current_value*v_ref)/(2**10)
-        current = (current-c_ref)/0.1       # Convert to voltage
-        power = voltage*current                 # Calculate power
+        
+        current_value = readadc(current_channel)
+        current = (current_value*v_ref)/(2**10)         # Convert "current" to a voltage
+        current = (current-c_ref)/0.1                   # Calculate the current
+        
+        power = voltage*current                         # Calculate power
         avgPower += power
+        
         print ("---------------------------------------")   # Display
         #print("Voltage Analog Value: %f" % voltage_value)
         print("Current Analog Value: %f" % current_value)
@@ -88,18 +74,19 @@ def dbThread():
         print("Current Value: %f" % current)
         print("Power Value: %f" % power)
         if count == sampleRate:
-            avgPower /= sampleRate
+            avgPower /= count
             globalAvgPower = avgPower
             dateTime = datetime.datetime.now()      # Get timestamp
-            #cur.execute("INSERT INTO test VALUES (?,?,?,?)", (voltage,current,power,dateTime))  # Update database
             cur.execute("INSERT INTO avgPower VALUES (?,?)", (avgPower, dateTime))
-            print (avgPower)
+            conn.commit()
+            print (globalAvgPower)
             avgPower = 0
             count = 0
+            time.sleep(delay)
+            continue
         count += 1
         time.sleep(delay)
     print('END')
-    conn.commit()
     conn.close()
 # END dbThread()
 
@@ -120,10 +107,6 @@ def rxThread():
            # print ("\n(rxThread) Recieved: " + data + " from " + addr[0])
 
         if data == "QUIT":
-            # GPIO.output(pin1, 0)
-            # GPIO.output(pin2, 0)
-            # GPIO.output(pin3, 0)
-            # GPIO.output(pin4, 0)
             flag = False        # Close connetion to client (iOS)
             break
 
@@ -178,7 +161,6 @@ def txThread():
         print (sys.getsizeof(data2))
         c.send(data2+'\n')
        # print("(txThread) Sent: " + str(count))
-       # print("String length: " + str(len(data2.encode('utf-8'))))
 
         if flag == False:
             c.close()               # Closing connection to client (iOS)
