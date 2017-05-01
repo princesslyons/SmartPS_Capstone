@@ -33,6 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("DidEnterBackground")
         SocketManager.sharedInstance.sendMessage(message: "QUIT")
         SocketManager.sharedInstance.NetworkDisable()
+        
         ViewController.sharedInstance.timer.invalidate()        //stop timer that updates usage
         print("timer stopped")
         
@@ -59,6 +60,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("WillTerminate")
         SocketManager.sharedInstance.sendMessage(message: "QUIT")
         SocketManager.sharedInstance.NetworkDisable()
+        
+        ViewController.sharedInstance.timer.invalidate()        //stop timer that updates usage
+        print("timer stopped")
     }
 
 
